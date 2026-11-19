@@ -1,43 +1,50 @@
-// gta6-meme-x-01 entry (Node 22, standard library only).
+// Entry program for make.fun's gta6-meme-x-01 bounty (Node 22, no deps).
 //
-// The entry itself is a post on X, not this program: the meme was made in
-// this session, it goes out on X from a public account with make.fun (a link
-// or written out) and/or a tag of @makefunai plus the play code in its text,
-// and POST.json at the repo root names the post's address. The house reads
-// the post from X, takes its first picture and its text, and hands both to
-// the judge. All this program has to do is hand POST.json to the grader:
-// copy it from the repository into the output directory, unchanged.
+// What is being entered is not code but a post on X: a GTA 6 meme whose
+// picture and text the house reads from X directly. This repository's one
+// job is to name that post, which it does in POST.json at the repo root,
+// and to hand that file to the grader. So this program copies POST.json
+// from the bot directory into the output directory, byte for byte, and
+// does nothing else: no network, no clock, nothing outside those two
+// directories, and the same input always yields the same output.
 //
-// Outside the grader's container, MAKEFUN_BOT_DIR and MAKEFUN_OUTPUT_DIR
-// stand in for /bot and /output:
+// In the grader the bot directory is /bot and the output directory is
+// /output. MAKEFUN_BOT_DIR and MAKEFUN_OUTPUT_DIR override both, which
+// is how a local run is done:
 //   mkdir -p out && MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { copyFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { copyFileSync, mkdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
-const botDir = process.env.MAKEFUN_BOT_DIR ?? '/bot';
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
-
-const sourcePath = join(botDir, 'POST.json');
-const targetPath = join(outputDir, 'POST.json');
-
-if (!existsSync(sourcePath)) {
-  console.error(`POST.json not found in ${botDir}: post the meme and fill in POST.json first.`);
+function fail(message: string): never {
+  console.error(`main.ts: ${message}`);
   process.exit(1);
+}
+
+const botDir = process.env.MAKEFUN_BOT_DIR ?? "/bot";
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+
+const source = join(botDir, "POST.json");
+const destination = join(outputDir, "POST.json");
+
+// Read the source first: if POST.json is missing or unreadable there is
+// nothing worth copying, and failing here beats failing mid-copy.
+let payload: Buffer;
+try {
+  payload = readFileSync(source);
+} catch {
+  fail(`cannot read ${source}: POST.json belongs at the repository root`);
 }
 
 mkdirSync(outputDir, { recursive: true });
+copyFileSync(source, destination);
 
-try {
-  copyFileSync(sourcePath, targetPath);
-} catch (err) {
-  console.error(`could not copy ${sourcePath} to ${targetPath}: ${(err as Error).message}`);
-  process.exit(1);
+// A truncated or altered copy would name the wrong post, or none at all,
+// so read the copy back and hold it against the bytes read at the start
+// before reporting success.
+const landed = readFileSync(destination);
+if (!landed.equals(payload)) {
+  fail(`the copy at ${destination} does not match ${source} byte for byte`);
 }
 
-// A partial copy would hand the gate a broken file, so check the copy
-// landed whole before calling it done.
-if (statSync(targetPath).size !== statSync(sourcePath).size) {
-  console.error(`copy of POST.json is incomplete: ${targetPath} does not match ${sourcePath}.`);
-  process.exit(1);
-}
+console.log(`main.ts: handed POST.json (${payload.length} bytes) to ${destination}, verified byte for byte`);
