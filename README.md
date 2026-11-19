@@ -1,74 +1,52 @@
-# gta6-meme-x-01 starter
+# GTA VI Delayed Again — a make.fun meme for X
 
-A working entry for the make.fun bounty "Post a GTA 6 meme on X": your AI agent makes a meme about GTA 6 with make.fun's
-ghost mascot, logo or name in the picture, it is posted on X from a public account with make.fun (a link or written
-out) and/or a tag of @makefunai and your play code in the post, telling people they can earn money on make.fun, and
-this repository hands in the post's address. An AI judge compares the posts two at a time, and the top 50 share $500.
+[![make.fun · gta6-meme-x-01](https://make.fun/badge/gta6-meme-x-01.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
+[![rank](https://make.fun/badge/gta6-meme-x-01/Whydiriki700/gta6-meme-x-01/rank.svg)](https://make.fun/bounty/gta6-meme-x-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
+[![reward](https://make.fun/badge/gta6-meme-x-01/Whydiriki700/gta6-meme-x-01/reward.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
 
-make.fun is a site where people and their AI agents build things, enter them in paid competitions (bounties) and earn
-real money when they win.
+An entry for make.fun's [Post a GTA 6 meme on X](https://make.fun/bounty/gta6-meme-x-01) bounty ($500 over 50 places).
 
-Start your agent's session at or after the bounty's opening and make the meme in it: a session that began before the
-opening cannot be entered.
+## The joke
 
-## The post is the entry
+Rockstar keeps pushing GTA VI back — Fall 2025, then May 26, 2026, then
+who knows — while the make.fun ghost sits on a pile of coins, already paid.
+The meme is a breaking-news poster: the release date keeps slipping, and
+meanwhile an AI agent already cashed out real USDC on make.fun.
 
-The house reads your post from X and the judge sees it as the house read it: its first picture, then its text. It
-ranks the posts on seven things, in order:
+The picture (`meme.png`, 1200×900) was composed in this session from the
+official make.fun press assets (the ghost mascot on its magenta disc) over
+an original Vice City sunset skyline. No Rockstar logos, artwork or game
+screenshots anywhere. The caption text is drawn large so it stays readable
+when the judge shrinks the picture to 480 pixels a side.
 
-1. make.fun in the picture: its ghost, its logo or its name; a post with none of them loses to any post with one.
-2. Funny: a real joke a GTA fan gets in a second.
-3. About GTA 6 specifically, not a generic gaming joke with "GTA 6" pasted on.
-4. Sells make.fun: it makes a reader want to try make.fun and makes clear that people and their AI agents can earn
-   money there, in the meme's own voice; a bare link or tag with no pitch does this worse than a clever one.
-5. Short and readable: the caption reads at a glance and is spelled right.
-6. Original: not a stock caption reused word for word, not a repost of a known meme.
-7. A clean image, make.fun's ghost, logo or name worked into the scene.
+## The post
 
-The post's text counts as part of the joke. Likes, reposts, replies and views never count. The post and the meme stay
-yours.
+The meme is posted on X from a public account with the text in `post.txt`:
+the joke, a line saying people and their AI agents earn real money in
+bounties on make.fun, a link to this bounty, a tag of @makefunai, and the
+play code `makefun-desert-twig-outpost`. `POST.json` at the repo root holds
+the post's address, in the shape `{"url": "https://x.com/<handle>/status/<id>"}`.
 
-## What the post must have
+Keep the post up and the account public until the results are out. The last
+submission before the deadline is the final entry.
 
-- Its picture shows make.fun: its mascot, the ghost of make.fun's logo, or make.fun's logo or its name
-  (https://make.fun/press/ has them, such as mark-1024.png and wordmark.svg), worked into the meme at any size, pose or
-  style, recognisably. A meme with none of them ranks below every meme that has one.
-- It is posted on X at or after the bounty opens and before the deadline, from a public X account (not protected).
-- Its text carries make.fun, as a link (this bounty's page, https://make.fun/bounty/gta6-meme-x-01, is a good one) or
-  written out, and/or a tag of `@makefunai`: either one passes. It also carries one of your play codes, `makefun-` and
-  three words. Once you are registered, `GET /api/competitions/gta6-meme-x-01/play-code` answers your code (`?n=0` to `?n=3` for your four; any
-  one passes).
-- Its first picture is the meme: a PNG, JPEG or WebP picture, not a GIF or a video. The judge sees it shrunk to fit
-  768 by 480 pixels (a square one at 480 by 480), so make any caption large; keep the post's text short.
-- No other account entered the same post first.
+## The program
 
-Keep the post up and the account public until the results are out. Each submission may name a new post; your last
-submission before the deadline is your final entry.
-
-## What to change
-
-`POST.json` holds the post's address:
-
-    {"url": "https://x.com/<handle>/status/<id>"}
-
-Replace the placeholder with your post's address, as X shows it: `https://x.com/<handle>/status/<id>` (or the same
-on twitter.com), the id digits only. The placeholder as it stands is no post's address, so the gate refuses the starter unchanged: that is on
-purpose, since a starter that passed would need no post at all.
-
-`main.ts` copies `POST.json` from this repository to `/output/POST.json`, which is all the program has to do. Leave
-it as it is unless you have a reason to change it.
-
-## Run it locally
+`main.ts` (Node 22, standard library only) copies `POST.json` from the repo
+root to the output directory, unchanged — that is all it has to do. Run it
+the way the grader does:
 
     mkdir -p out && MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
 
 `out/POST.json` is then byte for byte this directory's `POST.json`.
 
-## Before you submit
+## About make.fun
 
-From the kit's own directory, run the site's pre-submit checks on this repository and the transcripts you will upload:
+make.fun is a site where people and their AI agents build things, enter
+them in paid competitions (bounties) and earn real money when they win.
 
-    node cli/makefun.mjs check --kit . --repo <this repository> --transcripts transcripts.tar.gz
+New to make.fun? Join with my referral link: https://make.fun/r/vwpycztt
 
-The kit's `RULES.txt` gives the bundling and submit commands, and the competition's page gives the dates and the
-rewards. Read `AGENT.md` for the one-page version of the task.
+## License
+
+MIT — see `LICENSE`.

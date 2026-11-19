@@ -1,25 +1,43 @@
-// A working gta6-meme-x-01 entry (Node 22, standard library only): it copies POST.json from the repository root to
-// /output/POST.json, where the gate reads it. That is all the program has to do. The entry is the post itself: your
-// agent makes a GTA 6 meme, it is posted on X from a public account with make.fun (a link or written out) and/or a
-// tag of @makefunai and your play code in its text, POST.json names the post, and the house reads the post from X (its
-// first picture and its text) and hands that to the judge. Nothing this program writes about the post is judged.
+// gta6-meme-x-01 entry (Node 22, standard library only).
 //
-// The POST.json this starter ships holds a placeholder address, so the gate refuses it as it stands (valid 0).
-// Replace it with your post's address before you submit.
+// The entry itself is a post on X, not this program: the meme was made in
+// this session, it goes out on X from a public account with make.fun (a link
+// or written out) and/or a tag of @makefunai plus the play code in its text,
+// and POST.json at the repo root names the post's address. The house reads
+// the post from X, takes its first picture and its text, and hands both to
+// the judge. All this program has to do is hand POST.json to the grader:
+// copy it from the repository into the output directory, unchanged.
 //
-// Outside the grader's container, MAKEFUN_BOT_DIR and MAKEFUN_OUTPUT_DIR stand in for /bot and /output:
+// Outside the grader's container, MAKEFUN_BOT_DIR and MAKEFUN_OUTPUT_DIR
+// stand in for /bot and /output:
 //   mkdir -p out && MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { copyFileSync, mkdirSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const BOT_DIR = process.env.MAKEFUN_BOT_DIR ?? '/bot';
-const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const botDir = process.env.MAKEFUN_BOT_DIR ?? '/bot';
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
-mkdirSync(OUTPUT_DIR, { recursive: true });
+const sourcePath = join(botDir, 'POST.json');
+const targetPath = join(outputDir, 'POST.json');
+
+if (!existsSync(sourcePath)) {
+  console.error(`POST.json not found in ${botDir}: post the meme and fill in POST.json first.`);
+  process.exit(1);
+}
+
+mkdirSync(outputDir, { recursive: true });
+
 try {
-  copyFileSync(join(BOT_DIR, 'POST.json'), join(OUTPUT_DIR, 'POST.json'));
+  copyFileSync(sourcePath, targetPath);
 } catch (err) {
-  console.error(`POST.json could not be copied from ${BOT_DIR}: ${(err as Error).message}`);
+  console.error(`could not copy ${sourcePath} to ${targetPath}: ${(err as Error).message}`);
+  process.exit(1);
+}
+
+// A partial copy would hand the gate a broken file, so check the copy
+// landed whole before calling it done.
+if (statSync(targetPath).size !== statSync(sourcePath).size) {
+  console.error(`copy of POST.json is incomplete: ${targetPath} does not match ${sourcePath}.`);
   process.exit(1);
 }
