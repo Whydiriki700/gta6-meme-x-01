@@ -1,92 +1,97 @@
-// Entry program for the gta6-meme-x-01 make.fun bounty (round 2).
-//
-// The entry itself is a meme posted on X. This repository only has to tell
-// the gate where that post lives: POST.json, at the repository root, holds
-// the post's URL, and this program delivers a copy of it to the output
-// directory the harness reads from.
-//
-// Before copying, the program checks that POST.json is well formed and that
-// the URL it names really is an X status URL, so a malformed pointer fails
-// loudly here instead of being refused by the gate later.
-//
-// Node 22, standard library only. When run outside the grader, the
-// MAKEFUN_BOT_DIR and MAKEFUN_OUTPUT_DIR environment variables stand in
-// for the /bot and /output directories.
-
-import { copyFileSync, mkdirSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
-const botDir = process.env.MAKEFUN_BOT_DIR ?? '/bot';
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
-const sourcePath = join(botDir, 'POST.json');
-const targetPath = join(outputDir, 'POST.json');
+// gta6-meme-x-01 ronde 3 - submit X post URL from POST.json
+import { readFileSync, copyFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
 
 function fail(message: string): never {
-  console.error(`gta6-meme-x-01 entry: ${message}`);
+  console.error(`Error: ${message}`);
   process.exit(1);
 }
 
-// Read and parse the pointer file.
+const botDir = process.env.MAKEFUN_BOT_DIR ?? "/bot";
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+
+const sourcePath = join(botDir, "POST.json");
+
 let raw: string;
 try {
-  raw = readFileSync(sourcePath, 'utf8');
+  raw = readFileSync(sourcePath, "utf8");
 } catch (err) {
-  fail(`cannot read ${sourcePath}: ${(err as Error).message}`);
+  fail(`failed to read POST.json from bot directory: ${(err as Error).message}`);
 }
 
-let pointer: unknown;
+let parsed: unknown;
 try {
-  pointer = JSON.parse(raw!);
+  parsed = JSON.parse(raw);
 } catch (err) {
-  fail(`POST.json is not valid JSON: ${(err as Error).message}`);
+  fail(`failed to parse POST.json: ${(err as Error).message}`);
 }
 
-if (typeof pointer !== 'object' || pointer === null || Array.isArray(pointer)) {
-  fail('POST.json must be a JSON object with a "url" field');
+if (
+  typeof parsed !== "object" ||
+  parsed === null ||
+  Array.isArray(parsed) ||
+  typeof (parsed as { url?: unknown }).url !== "string" ||
+  (parsed as { url: string }).url.length === 0
+) {
+  fail(`POST.json must be an object with a non-empty string "url" field`);
 }
 
-const url = (pointer as Record<string, unknown>).url;
-if (typeof url !== 'string' || url.length === 0) {
-  fail('POST.json must carry a non-empty string "url"');
-}
+const url = (parsed as { url: string }).url;
 
-// The URL has to point at a single post on x.com: /<handle>/status/<id>.
-let parsed: URL;
+let parsedUrl: URL;
 try {
-  parsed = new URL(url!);
+  parsedUrl = new URL(url);
 } catch {
-  fail(`"url" is not a parseable URL: ${url}`);
+  fail(`url is not a valid URL: ${url}`);
 }
 
-if (parsed.protocol !== 'https:' || parsed.hostname !== 'x.com') {
-  fail(`"url" must be an https://x.com address, got: ${url}`);
+if (parsedUrl.protocol !== "https:") {
+  fail(`url must use https: protocol`);
 }
 
-const statusPath = /^\/[A-Za-z0-9_]{1,15}\/status\/\d+$/;
-if (!statusPath.test(parsed.pathname)) {
-  fail(`"url" must name one post (/<handle>/status/<id>), got path: ${parsed.pathname}`);
+if (parsedUrl.hostname !== "x.com") {
+  fail(`url hostname must be exactly x.com`);
 }
 
-// Deliver the pointer to the harness.
-mkdirSync(outputDir, { recursive: true });
+const pathPattern = /^\/[A-Za-z0-9_]{1,15}\/status\/[0-9]+$/;
+if (!pathPattern.test(parsedUrl.pathname)) {
+  fail(`url path must match /<handle>/status/<id>`);
+}
+
 try {
-  copyFileSync(sourcePath, targetPath);
+  mkdirSync(outputDir, { recursive: true });
 } catch (err) {
-  fail(`cannot copy POST.json to ${targetPath}: ${(err as Error).message}`);
+  fail(`failed to create output directory: ${(err as Error).message}`);
 }
 
-// Trust nothing about the copy: read the delivered file back, parse it, and
-// make sure it still names the same validated post. A copy that was cut
-// short or written to the wrong place fails here, not at the gate.
-let deliveredUrl: unknown;
+const destPath = join(outputDir, "POST.json");
 try {
-  const delivered = JSON.parse(readFileSync(targetPath, 'utf8'));
-  deliveredUrl = (delivered as Record<string, unknown>).url;
+  copyFileSync(sourcePath, destPath);
 } catch (err) {
-  fail(`the delivered POST.json at ${targetPath} does not parse: ${(err as Error).message}`);
-}
-if (deliveredUrl !== url) {
-  fail(`the delivered POST.json names ${String(deliveredUrl)}, expected ${url}`);
+  fail(`failed to copy POST.json to output directory: ${(err as Error).message}`);
 }
 
-console.log(`POST.json delivered to ${targetPath} (post: ${url})`);
+let copiedRaw: string;
+try {
+  copiedRaw = readFileSync(destPath, "utf8");
+} catch (err) {
+  fail(`failed to read back copied POST.json: ${(err as Error).message}`);
+}
+
+let copiedParsed: unknown;
+try {
+  copiedParsed = JSON.parse(copiedRaw);
+} catch (err) {
+  fail(`failed to parse copied POST.json: ${(err as Error).message}`);
+}
+
+const copiedUrl =
+  typeof copiedParsed === "object" && copiedParsed !== null
+    ? (copiedParsed as { url?: unknown }).url
+    : undefined;
+
+if (copiedUrl !== url) {
+  fail(`copied POST.json url does not match validated url`);
+}
+
+console.log(`Submitted post: ${url}`);
