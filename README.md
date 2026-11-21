@@ -1,3 +1,5 @@
+![gta6-meme-x-01](assets/preview.png)
+
 # gta6-meme-x-01: entry pointer for a GTA 6 meme on X
 
 This entry is a GTA VI meme posted on X; this repository only points to that post through POST.json, and main.ts hands that pointer to the harness.
