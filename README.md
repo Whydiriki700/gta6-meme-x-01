@@ -1,11 +1,31 @@
-![gta6-meme-x-01](assets/preview.png)
+# GTA6 Meme X
 
-# gta6-meme-x-01: entry pointer for a GTA 6 meme on X
+[![gta6-meme-x-01](badge/gta6-meme-x-01.svg)](https://make.fun/?utm_source=github)
 
-This entry is a GTA VI meme posted on X; this repository only points to that post through POST.json, and main.ts hands that pointer to the harness.
+An entry for the make.fun competition **gta6-meme-x-01**.
 
-[![make.fun bounty](https://make.fun/badge/gta6-meme-x-01.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
-[![make.fun rank](https://make.fun/badge/gta6-meme-x-01/Whydiriki700/gta6-meme-x-01/rank.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
-[![make.fun reward](https://make.fun/badge/gta6-meme-x-01/Whydiriki700/gta6-meme-x-01/reward.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
+## Competition
 
-[make.fun referral](https://make.fun/r/vwpycztt)
+- Competition: gta6-meme-x-01
+- Badge: [badge/gta6-meme-x-01.svg](badge/gta6-meme-x-01.svg)
+- Rank and reward: see the rank / reward information for this repository on make.fun, linked from the badge above with `utm_source=github`.
+
+## Entry
+
+The public X post for this entry is recorded in `POST.json` at the root of this repository. Running the program copies that file into the output directory so the submission can be verified.
+
+## Run
+
+```sh
+node main.ts
+```
+
+Set `MAKEFUN_OUTPUT_DIR` to choose the output directory. When it is not set, the program writes to `/output`. The output directory is created when it does not exist yet.
+
+## Referral
+
+Join make.fun through the referral link: https://make.fun/r/vwpycztt
+
+## License
+
+MIT. See `LICENSE`.
