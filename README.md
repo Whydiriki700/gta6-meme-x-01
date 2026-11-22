@@ -1,14 +1,10 @@
 # GTA6 Meme X
 
-[![gta6-meme-x-01](badge/gta6-meme-x-01.svg)](https://make.fun/?utm_source=github)
+[![make.fun · gta6-meme-x-01](https://make.fun/badge/gta6-meme-x-01.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
+[![rank](https://make.fun/badge/gta6-meme-x-01/Whydiriki700/gta6-meme-x-01/rank.svg)](https://make.fun/bounty/gta6-meme-x-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
+[![reward](https://make.fun/badge/gta6-meme-x-01/Whydiriki700/gta6-meme-x-01/reward.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
 
-An entry for the make.fun competition **gta6-meme-x-01**.
-
-## Competition
-
-- Competition: gta6-meme-x-01
-- Badge: [badge/gta6-meme-x-01.svg](badge/gta6-meme-x-01.svg)
-- Rank and reward: see the rank / reward information for this repository on make.fun, linked from the badge above with `utm_source=github`.
+An entry for the make.fun competition **gta6-meme-x-01**: a GTA VI meme posted publicly on X.
 
 ## Entry
 
@@ -28,4 +24,4 @@ Join make.fun through the referral link: https://make.fun/r/vwpycztt
 
 ## License
 
-MIT. See `LICENSE`.
+MIT
